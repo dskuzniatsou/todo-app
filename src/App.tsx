@@ -25,7 +25,15 @@ export const  App = () => {
 
     const addTodo = (text: string) => {
         const newTodo = {id: uuid(), text: text, completed: false}// создать новую задачу
-       setTodos([...todos,newTodo]) // обновить setTodos
+       setTodos([...todos,newTodo])
+        // обновить setTodos
+    }
+    const deleteTodo = (id:string) => {
+        setTodos(prev =>
+            prev.filter(todo =>
+                todo.id !== id
+            )
+        );
     }
 
     const toggleTodo = (id:string)=> {
@@ -38,8 +46,8 @@ export const  App = () => {
     return (
         <div>
             <Greeting name="Dmitriy"/>
-            <AddForm onAdd={addTodo} />
-            <TodoList todos={todos} onToggle={toggleTodo}/>
+            <AddForm onAdd={addTodo}  />
+            <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo}/>
 
         </div>
     );

@@ -9,13 +9,14 @@ type Todo = {
 type Props = {
     todos: Todo[];
     onToggle: (id: string) => void;
+    onDelete: (id: string) => void;
 };
 
-export const TodoList = ({ todos,onToggle }: Props) => {
+export const TodoList = ({ todos,onToggle, onDelete }: Props) => {
     return (
         <div>
             {todos.map(todo => (
-                <TodoItem todo={todo} key={todo.id} onToggle={onToggle}/>
+                <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete}/>
 
            ))}
         </div>
