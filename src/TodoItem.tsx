@@ -1,3 +1,4 @@
+import * as React from "react";
 
 
 type Todo = {
@@ -12,7 +13,8 @@ type Props = {
     onDelete: (id: string) => void;
 };
 
-export const TodoItem = ({ todo, onToggle,onDelete }: Props) => {
+export const TodoItem = React.memo (({ todo, onToggle,onDelete }: Props) => {
+    console.log("TodoItem render:", todo.text);
     return (
         <div>
             <input
@@ -24,4 +26,4 @@ export const TodoItem = ({ todo, onToggle,onDelete }: Props) => {
             <button onClick={()=>onDelete(todo.id)}>Delete</button>
         </div>
     );
-};
+});

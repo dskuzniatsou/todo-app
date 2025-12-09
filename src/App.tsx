@@ -1,7 +1,7 @@
 
 import './App.css'
 import {Greeting} from "./Greeting.tsx";
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
@@ -14,35 +14,45 @@ type Todo = {
 
 
 export const  App = () => {
-
+    console.log("App render");
     const initialState = [
         {id:uuid() , text:'Hello', completed:true},
         {id:uuid()  , text:'by', completed:false},
         {id:uuid()  , text:'pause', completed:true},
     ]
-    const [todos,setTodos] = useState<Todo[]>(initialState)
+    // ---- Функция для первого рендера ----
+    const getTodos = (): Todo[] => {
+        const saved = localStorage.getItem('todos');
+        return saved ? JSON.parse(saved) : initialState;
+    };
+
+    const [todos,setTodos] = useState<Todo[]>(getTodos)
+// ---- Сохраняем изменения в localStorage ----
+    useEffect(() => {
+        localStorage.setItem('todos', JSON.stringify(todos));
+    }, [todos]);
 
 
-    const addTodo = (text: string) => {
+    const addTodo = useCallback((text: string) => {
         const newTodo = {id: uuid(), text: text, completed: false}// создать новую задачу
-       setTodos([...todos,newTodo])
+       setTodos(todos=> [...todos,newTodo])
         // обновить setTodos
-    }
-    const deleteTodo = (id:string) => {
+    }, [])
+    const deleteTodo = useCallback((id:string) => {
         setTodos(prev =>
             prev.filter(todo =>
                 todo.id !== id
             )
         );
-    }
+    }, [])
 
-    const toggleTodo = (id:string)=> {
+    const toggleTodo = useCallback((id:string)=> {
         setTodos(prev =>
             prev.map(todo =>
                 todo.id === id ? { ...todo, completed: !todo.completed } : todo
             )
         );
-    }
+    }, [])
     return (
         <div>
             <Greeting name="Dmitriy"/>

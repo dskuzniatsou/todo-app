@@ -13,11 +13,11 @@ type Props = {
 };
 
 export const TodoList = ({ todos,onToggle, onDelete }: Props) => {
+    console.log("TodoList render");
     return (
         <div>
             {todos.map(todo => (
                 <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete}/>
-
            ))}
         </div>
     );

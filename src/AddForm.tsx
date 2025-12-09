@@ -13,10 +13,10 @@ const handleAdd = () => {
         setInputValue('');
         return (setError('Поле не может быть пустым'))
     }
-    else if (inputValue.trim().length > 5){
+    else if (inputValue.trim().length > 20){
         console.log(inputValue.length);
         setInputValue('');
-       return  setError('Слишком много символов (максимум 5)');
+       return  setError('Слишком много символов (максимум 20)');
 
     }
     onAdd(inputValue);
