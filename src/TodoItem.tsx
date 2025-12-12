@@ -1,5 +1,5 @@
 import * as React from "react";
-
+import styles from './Todolist.module.css'
 
 type Todo = {
     id: string;
@@ -16,7 +16,7 @@ type Props = {
 export const TodoItem = React.memo (({ todo, onToggle,onDelete }: Props) => {
     console.log("TodoItem render:", todo.text);
     return (
-        <div>
+        <div className={styles.todoItem}>
             <input
                 type="checkbox"
                 checked={todo.completed}

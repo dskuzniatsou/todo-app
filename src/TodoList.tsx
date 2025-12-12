@@ -1,9 +1,11 @@
 import {TodoItem} from "./TodoItem.tsx";
+import styles from "./Todolist.module.css"
 
 type Todo = {
     id: string;
     text: string;
     completed: boolean;
+
 };
 
 type Props = {
@@ -15,7 +17,7 @@ type Props = {
 export const TodoList = ({ todos,onToggle, onDelete }: Props) => {
     console.log("TodoList render");
     return (
-        <div>
+        <div className={styles.todolist}>
             {todos.map(todo => (
                 <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete}/>
            ))}

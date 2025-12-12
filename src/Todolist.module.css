@@ -1,0 +1,19 @@
+.todolist {
+    display: grid;
+    width: 100vw;
+    grid-template-columns: 1fr 1fr 1fr;
+    padding: 1rem;
+
+}
+.todoItem {
+    display: flex;
+    margin: 1rem;
+    padding: 1rem;
+    border: 1px solid #000000;
+    justify-content: space-between;
+}
+.todoItem span {
+    display: flex;
+    align-self: center;
+    justify-self: flex-start;
+}

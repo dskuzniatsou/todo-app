@@ -26,7 +26,7 @@ const handleAdd = () => {
     return (
         <div>
             {error && <div style={{ color: 'red' }}>{error}</div>}
-            <input type="text"
+            <input  type="text"
                    placeholder={"добавьте задачу"}
                    value={inputValue}
                    onChange={(e) => {
