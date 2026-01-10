@@ -1,7 +1,7 @@
 
 import './App.css'
 import {Greeting} from "./Greeting.tsx";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
@@ -11,6 +11,7 @@ type Todo = {
     text: string;
     completed: boolean;
 };
+type FilteredTodos = 'all' | 'active' | 'completed'
 
 
 export const  App = () => {
@@ -27,6 +28,8 @@ export const  App = () => {
     };
 
     const [todos,setTodos] = useState<Todo[]>(getTodos)
+    const [filter, setFilter] = useState<FilteredTodos>('all')
+
 // ---- Сохраняем изменения в localStorage ----
     useEffect(() => {
         localStorage.setItem('todos', JSON.stringify(todos));
@@ -46,6 +49,16 @@ export const  App = () => {
         );
     }, [])
 
+    const filteredTodos = useMemo(() => {
+        return todos.filter(todo => {
+            if (filter === 'all') return true;
+            if (filter === 'active') return !todo.completed;
+            if (filter === 'completed') return todo.completed;
+            return true;
+        });
+    }, [todos, filter]);
+
+
     const toggleTodo = useCallback((id:string)=> {
         setTodos(prev =>
             prev.map(todo =>
@@ -57,7 +70,27 @@ export const  App = () => {
         <div>
             <Greeting name="Dmitriy"/>
             <AddForm onAdd={addTodo}  />
-            <TodoList todos={todos} onToggle={toggleTodo} onDelete={deleteTodo}/>
+            <div style={{ marginBottom: '10px' }}>
+                <button
+                    onClick={() => setFilter('all')}
+                    style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}
+                >
+                    All
+                </button>
+                <button
+                    onClick={() => setFilter('active')}
+                    style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}
+                >
+                    Active
+                </button>
+                <button
+                    onClick={() => setFilter('completed')}
+                    style={{ fontWeight: filter === 'completed' ? 'bold' : 'normal' }}
+                >
+                    Completed
+                </button>
+            </div>
+            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo}/>
 
         </div>
     );

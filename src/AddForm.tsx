@@ -8,33 +8,36 @@ export const AddForm = ({ onAdd }: Props) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState('');
 
-const handleAdd = () => {
+const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
+e.preventDefault()
     if ((inputValue.trim() === "")) {
-        setInputValue('');
+        // setInputValue('');
         return (setError('Поле не может быть пустым'))
     }
-    else if (inputValue.trim().length > 20){
-        console.log(inputValue.length);
-        setInputValue('');
-       return  setError('Слишком много символов (максимум 20)');
 
-    }
     onAdd(inputValue);
     setInputValue('');
     setError('');
 }
     return (
-        <div>
+        <form onSubmit={handleAdd}>
+
             {error && <div style={{ color: 'red' }}>{error}</div>}
             <input  type="text"
                    placeholder={"добавьте задачу"}
                    value={inputValue}
                    onChange={(e) => {
-                       setInputValue(e.target.value);
+
                        if (error) setError('');
+                       if(e.target.value.trim().length > 30){setError('Слишком много символов (максимум 30)'); return}
+                       else {setInputValue(e.target.value);}
                    }} />
-            <button onClick={handleAdd} >Добавить список </button>
-        </div>
+            <button type={"submit"}
+                    // onSubmit={handleAdd}
+                    disabled={(inputValue.trim() === '')||(error !== '')}>
+                Добавить список
+            </button>
+        </form>
     );
 };
 
