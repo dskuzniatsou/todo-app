@@ -1,30 +1,30 @@
 import {useState} from "react";
 
 type Props = {
-    onAdd: (text: string) => void;
+    onAddTask: (todoId: string, text:string)=> void,
+    todoId: string
 };
 
-export const AddForm = ({ onAdd }: Props) => {
+export const AddTaskForm = ({ onAddTask, todoId }: Props) => {
     const [inputValue, setInputValue] = useState('');
     const [error, setError] = useState('');
 
-const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
+const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => {
 e.preventDefault()
     if ((inputValue.trim() === "")) {
-        // setInputValue('');
         return (setError('Поле не может быть пустым'))
     }
 
-    onAdd(inputValue);
+    onAddTask(todoId, inputValue);
     setInputValue('');
     setError('');
 }
     return (
-        <form onSubmit={handleAdd}>
+        <form onSubmit={handleAddTask}>
 
             {error && <div style={{ color: 'red' }}>{error}</div>}
             <input  type="text"
-                   placeholder={"добавьте список"}
+                   placeholder={"добавьте задачу"}
                    value={inputValue}
                    onChange={(e) => {
 
@@ -33,9 +33,8 @@ e.preventDefault()
                        else {setInputValue(e.target.value);}
                    }} />
             <button type={"submit"}
-                    // onSubmit={handleAdd}
                     disabled={(inputValue.trim() === '')||(error !== '')}>
-                Добавить список
+                Добавить задачу
             </button>
         </form>
     );
