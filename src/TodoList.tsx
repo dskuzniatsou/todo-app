@@ -18,14 +18,16 @@ type Props = {
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
     onAddTask: (todoId: string, text: string) => void;
+    onToggleTask: (todoId: string, taskId: string) => void;
+    onDeleteTask: (todoId: string, taskId: string) => void;
 };
 
-export const TodoList = ({todos, onToggle, onDelete, onAddTask}: Props) => {
+export const TodoList = ({todos, onToggle, onDelete, onAddTask, onDeleteTask, onToggleTask}: Props) => {
     console.log("TodoList render");
     return (
         <div className={styles.todolist}>
             {todos.map(todo => (
-                <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete} onAddTask={onAddTask}/>
+                <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete} onAddTask={onAddTask} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask}/>
             ))}
         </div>
     );

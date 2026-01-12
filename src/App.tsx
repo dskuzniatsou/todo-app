@@ -23,7 +23,7 @@ type TodoFilter = 'all' | 'active' | 'completed'
 export const  App = () => {
     console.log("App render");
     const initialState = [
-        {id:uuid() , text:'Hello', completed:true, tasks: []},
+        {id:uuid() , text:'Купить', completed:true, tasks: [{id: uuid(), text:'Молоко', completed: false}]},
         {id:uuid()  , text:'by', completed:false, tasks: []},
         {id:uuid()  , text:'pause', completed:true, tasks: []},
     ]
@@ -41,7 +41,7 @@ export const  App = () => {
         localStorage.setItem('todos', JSON.stringify(todos));
     }, [todos]);
 
-
+// действия со списком задач
     const addTodo = useCallback((text: string) => {
         const newTodo = {id: uuid(), text: text, completed: false,tasks: []}// создать новую тему
        setTodos(todos=> [...todos,newTodo])
@@ -64,6 +64,15 @@ export const  App = () => {
         });
     }, [todos, filter]);
 
+    const toggleTodo = useCallback((id:string)=> {
+        setTodos(prev =>
+            prev.map(todo =>
+                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+            )
+        );
+    }, [])
+// действия с задачами
+        //добавление задачи
     const addTask  = useCallback((todoId: string  , text: string) => {
         const newTask : Task = {id: uuid(), text: text, completed: false}
         setTodos(prev =>
@@ -74,14 +83,33 @@ export const  App = () => {
             )
         );
     }, [])
-
-    const toggleTodo = useCallback((id:string)=> {
+        // удаление задачи
+    const deleteTask = useCallback((todoId: string  , taskId: string) => {
         setTodos(prev =>
             prev.map(todo =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
+                todo.id === todoId
+                    ? {...todo,
+                        tasks: todo.tasks.filter(task =>task.id !==taskId)}
+                                     : todo
             )
         );
     }, [])
+    // переключение чекбокса
+    const toggleTask = useCallback((todoId: string  , taskId: string)=> {
+        setTodos(prev =>
+            prev.map(todo =>
+                todo.id === todoId
+                    ? {...todo,
+                    tasks: todo.tasks.map(task =>
+                            task.id === taskId
+                                ? { ...task, completed: !task.completed}
+                                : task)}  : todo
+
+            )
+        );
+    }, [])
+
+
     return (
         <div>
             <Greeting name="Dmitriy"/>
@@ -106,7 +134,8 @@ export const  App = () => {
                     Completed
                 </button>
             </div>
-            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} />
+            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo}
+                      onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask}/>
 
         </div>
     );

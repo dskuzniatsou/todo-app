@@ -3,11 +3,11 @@
     width: 100vw;
     grid-template-columns: 1fr 1fr 1fr;
     padding: 1rem;
-
-}
-.todoItem {
+   }
+.todoItem{
     display: flex;
-
+    flex-direction: column;
+    gap: 5px;
     margin: 1rem;
     padding: 1rem;
     border: 1px solid #000000;
@@ -15,8 +15,21 @@
     justify-content: space-between;
     white-space: pre-wrap;
 }
+.todoItem div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
 .todoItem span {
     display: flex;
     align-self: center;
     justify-self: flex-start;
 }
+.todoItem form {
+    display: flex;
+    flex-direction: row;
+}
+/*.taskItem {*/
+/*    display: flex;*/
+/*    flex-direction: row*/
+/*}*/
