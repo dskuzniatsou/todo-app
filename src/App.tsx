@@ -64,25 +64,63 @@ export const  App = () => {
         });
     }, [todos, filter]);
 
-    const toggleTodo = useCallback((id:string)=> {
+    // const toggleTodo = useCallback((id:string)=> {
+    //     setTodos(prev =>
+    //         prev.map(todo =>
+    //             todo.id === id ? { ...todo, completed: !todo.completed } : todo
+    //         )
+    //     );
+    // }, [])
+// для автоматического переключения чекбокса todo
+    const toggleTodo = useCallback((todoId: string) => {
         setTodos(prev =>
-            prev.map(todo =>
-                todo.id === id ? { ...todo, completed: !todo.completed } : todo
-            )
+            prev.map(todo => {
+                if (todo.id !== todoId) return todo;
+
+                // ❗ если есть задачи — запрещаем ручное переключение
+                if (todo.tasks.length > 0) return todo;
+
+                return {
+                    ...todo,
+                    completed: !todo.completed,
+                };
+            })
         );
-    }, [])
+    }, []);
 // действия с задачами
         //добавление задачи
-    const addTask  = useCallback((todoId: string  , text: string) => {
-        const newTask : Task = {id: uuid(), text: text, completed: false}
+    // const addTask  = useCallback((todoId: string  , text: string) => {
+    //     const newTask : Task = {id: uuid(), text: text, completed: false}
+    //     setTodos(prev =>
+    //         prev.map(todo =>
+    //             todo.id === todoId
+    //                 ? { ...todo, tasks: [...todo.tasks, newTask] }
+    //                 : todo
+    //         )
+    //     );
+    // }, [])
+// добавление задачи и автоматическая проверка
+    const addTask = useCallback((todoId: string, text: string) => {
+        const newTask = {
+            id: uuid(),
+            text,
+            completed: false,
+        };
+
         setTodos(prev =>
-            prev.map(todo =>
-                todo.id === todoId
-                    ? { ...todo, tasks: [...todo.tasks, newTask] }
-                    : todo
-            )
+            prev.map(todo => {
+                if (todo.id !== todoId) return todo;
+
+                const updatedTasks = [...todo.tasks, newTask];
+
+                return {
+                    ...todo,
+                    tasks: updatedTasks,
+                    completed: false, // 🔥 ключевой момент
+                };
+            })
         );
-    }, [])
+    }, []);
         // удаление задачи
     const deleteTask = useCallback((todoId: string  , taskId: string) => {
         setTodos(prev =>
@@ -95,19 +133,43 @@ export const  App = () => {
         );
     }, [])
     // переключение чекбокса
-    const toggleTask = useCallback((todoId: string  , taskId: string)=> {
+    // const toggleTask = useCallback((todoId: string  , taskId: string)=> {
+    //     setTodos(prev =>
+    //         prev.map(todo =>
+    //             todo.id === todoId
+    //                 ? {...todo,
+    //                 tasks: todo.tasks.map(task =>
+    //                         task.id === taskId
+    //                             ? { ...task, completed: !task.completed}
+    //                             : task)}  : todo
+    //
+    //         )
+    //     );
+    // }, [])
+        // для автоматического включения чекбокса todo
+    const toggleTask = useCallback((todoId: string, taskId: string) => {
         setTodos(prev =>
-            prev.map(todo =>
-                todo.id === todoId
-                    ? {...todo,
-                    tasks: todo.tasks.map(task =>
-                            task.id === taskId
-                                ? { ...task, completed: !task.completed}
-                                : task)}  : todo
+            prev.map(todo => {
+                if (todo.id !== todoId) return todo;
 
-            )
+                const updatedTasks = todo.tasks.map(task =>
+                    task.id === taskId
+                        ? { ...task, completed: !task.completed }
+                        : task
+                );
+
+                const todoCompleted =
+                    updatedTasks.length > 0 &&
+                    updatedTasks.every(task => task.completed);
+
+                return {
+                    ...todo,
+                    tasks: updatedTasks,
+                    completed: todoCompleted,
+                };
+            })
         );
-    }, [])
+    }, []);
 
 
     return (

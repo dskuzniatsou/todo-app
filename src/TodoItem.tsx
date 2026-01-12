@@ -44,8 +44,8 @@ export const TodoItem = React.memo (({ todo, onToggle,onDelete,
                 <input
                     type="checkbox"
                     checked={todo.completed}
-                    onChange={()=>onToggle(todo.id)}
-
+                    disabled={todo.tasks.length > 0}
+                    onChange={() => onToggle(todo.id)}
                 />
                 <span>{todo.text}</span>
                 <button onClick={()=>onDelete(todo.id)}>X</button>
