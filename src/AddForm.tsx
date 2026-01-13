@@ -33,10 +33,10 @@ e.preventDefault()
                        else {setInputValue(e.target.value);}
                    }} />
             <button type={"submit"}
-                    // onSubmit={handleAdd}
                     disabled={(inputValue.trim() === '')||(error !== '')}>
                 Добавить список
             </button>
+
         </form>
     );
 };

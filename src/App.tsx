@@ -87,6 +87,17 @@ export const  App = () => {
             })
         );
     }, []);
+
+    const updateTodoTitle = useCallback((todoId: string, text: string) => {
+        setTodos(prev =>
+            prev.map(todo =>
+                todo.id === todoId
+                    ? { ...todo, text }
+                    : todo
+            )
+        );
+    }, []);
+
 // действия с задачами
         //добавление задачи
     // const addTask  = useCallback((todoId: string  , text: string) => {
@@ -196,7 +207,7 @@ export const  App = () => {
                     Completed
                 </button>
             </div>
-            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo}
+            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdateTitle={updateTodoTitle}
                       onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask}/>
 
         </div>

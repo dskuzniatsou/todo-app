@@ -29,7 +29,15 @@
     display: flex;
     flex-direction: row;
 }
-/*.taskItem {*/
-/*    display: flex;*/
-/*    flex-direction: row*/
-/*}*/
+.progress {
+    height: 6px;
+    background: #ec1c1c;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: #4caf50;
+    transition: width 0.2s ease;
+}
