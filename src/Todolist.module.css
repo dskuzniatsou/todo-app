@@ -1,19 +1,29 @@
 .todolist {
-    display: grid;
-    width: 100vw;
-    grid-template-columns: 1fr 1fr 1fr;
+    /*display: grid;*/
+    /*    grid-template-columns: 1fr 1fr 1fr;*/
+display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
     padding: 1rem;
+    width: 100%;
+    max-width: 100%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
    }
 .todoItem{
     display: flex;
     flex-direction: column;
+    height: auto;
+  max-width: 30%;
     gap: 5px;
     margin: 1rem;
     padding: 1rem;
     border: 1px solid #000000;
     border-radius: 1rem;
-    justify-content: space-between;
+    justify-content: flex-start;
     white-space: pre-wrap;
+
 }
 .todoItem div{
     display: flex;
@@ -34,10 +44,12 @@
     background: #ec1c1c;
     border-radius: 4px;
     overflow: hidden;
+    width: 100%;
 }
 
 .progressFill {
     height: 100%;
+    max-width: 100%;
     background: #4caf50;
     transition: width 0.2s ease;
 }

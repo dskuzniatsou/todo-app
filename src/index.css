@@ -1,3 +1,4 @@
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -11,6 +12,11 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 a {
@@ -29,7 +35,12 @@ body {
   min-width: 320px;
   min-height: 100vh;
 }
-
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
@@ -54,6 +65,7 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -64,5 +76,15 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+}
+
+@media (max-width: 480px) {
+  .todoItem {
+    font-size: 14px;
+  }
+
+  button {
+    padding: 6px 8px;
   }
 }

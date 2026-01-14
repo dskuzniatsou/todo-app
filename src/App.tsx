@@ -6,6 +6,7 @@ import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
 
+
 type  Task = {
     id: string;
     text: string;
@@ -181,10 +182,27 @@ export const  App = () => {
             })
         );
     }, []);
+    // редактирование задачи
+    const updateTask = useCallback((todoId: string, taskId: string, text: string) => {
+        setTodos(prev =>
+            prev.map(todo =>
+                todo.id === todoId
+                    ? {
+                        ...todo,
+                        tasks: todo.tasks.map(task =>
+                            task.id === taskId
+                                ? { ...task, text }
+                                : task
+                        )
+                    }
+                    : todo
+            )
+        );
+    }, []);
 
 
     return (
-        <div>
+        <div className={'app'}>
             <Greeting name="Dmitriy"/>
             <AddForm onAdd={addTodo}  />
             <div style={{ marginBottom: '10px' }}>
@@ -208,7 +226,7 @@ export const  App = () => {
                 </button>
             </div>
             <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdateTitle={updateTodoTitle}
-                      onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask}/>
+                      onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask} onUpdateTask={updateTask} />
 
         </div>
     );

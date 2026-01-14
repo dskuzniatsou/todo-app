@@ -28,11 +28,12 @@ type Props = {
     onUpdateTitle: (todoId: string, text: string) => void;
     onToggleTask: (todoId: string, taskId: string) => void;
     onDeleteTask: (todoId: string, taskId: string) => void;
+    onUpdateTask: (todoId:string, taskId: string, text: string) => void;
 };
 
 export const TodoItem = React.memo(({
                                         todo, onToggle, onDelete, onUpdateTitle,
-                                        onAddTask, onToggleTask, onDeleteTask
+                                        onAddTask, onToggleTask, onDeleteTask, onUpdateTask
                                     }: Props) => {
     console.log("TodoItem render:", todo.text);
     const [isEditing, setIsEditing] = useState(false);
@@ -140,7 +141,7 @@ export const TodoItem = React.memo(({
                     onChange={() => onToggle(todo.id)}
                 />
 
-                {/*<span >{todo.text}</span>*/}
+
                 {isEditing ? (
                     <input
                         value={title}
@@ -170,7 +171,9 @@ export const TodoItem = React.memo(({
                                                  todoId={todo.id}
                                                  task={task}
                                                  onToggle={onToggleTask}
-                                                 onDelete={onDeleteTask}/>
+                                                 onDelete={onDeleteTask}
+                                                 onUpdateTask={onUpdateTask}
+                />
             ))}
             <div style={{marginBottom: '10px'}}>
                 <button
