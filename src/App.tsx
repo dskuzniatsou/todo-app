@@ -5,6 +5,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
+import {FilterButtons} from "./components/FilterButtons.tsx";
 
 
 type  Task = {
@@ -18,7 +19,7 @@ type Todo = {
     completed: boolean;
     tasks:Task[]
 };
-type TodoFilter = 'all' | 'active' | 'completed'
+export type Filter = 'all' | 'active' | 'completed'
 
 
 export const  App = () => {
@@ -35,7 +36,7 @@ export const  App = () => {
     };
 
     const [todos,setTodos] = useState<Todo[]>(getTodos)
-    const [filter, setFilter] = useState<TodoFilter>('all')
+    const [filter, setFilter] = useState<Filter>('all')
 
 // ---- Сохраняем изменения в localStorage ----
     useEffect(() => {
@@ -205,26 +206,31 @@ export const  App = () => {
         <div className={'app'}>
             <Greeting name="Dmitriy"/>
             <AddForm onAdd={addTodo}  />
-            <div style={{ marginBottom: '10px' }}>
-                <button
-                    onClick={() => setFilter('all')}
-                    style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}
-                >
-                    All
-                </button>
-                <button
-                    onClick={() => setFilter('active')}
-                    style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}
-                >
-                    Active
-                </button>
-                <button
-                    onClick={() => setFilter('completed')}
-                    style={{ fontWeight: filter === 'completed' ? 'bold' : 'normal' }}
-                >
-                    Completed
-                </button>
-            </div>
+            <FilterButtons
+                value={filter}
+                onChange={setFilter}
+            />
+            {/*//html*/}
+            {/*<div style={{ marginBottom: '10px' }}>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('all')}*/}
+            {/*        style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}*/}
+            {/*    >*/}
+            {/*        All*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('active')}*/}
+            {/*        style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}*/}
+            {/*    >*/}
+            {/*        Active*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('completed')}*/}
+            {/*        style={{ fontWeight: filter === 'completed' ? 'bold' : 'normal' }}*/}
+            {/*    >*/}
+            {/*        Completed*/}
+            {/*    </button>*/}
+            {/*</div>*/}
             <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdateTitle={updateTodoTitle}
                       onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask} onUpdateTask={updateTask} />
 

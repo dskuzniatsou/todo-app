@@ -5,6 +5,7 @@ import {TaskItem} from "./TaskItem.tsx";
 import {useEffect, useState} from "react";
 import {useTodoProgress} from "./hooks/useTodoProgress.ts";
 import {useTaskFilter} from "./hooks/useTaskFilter.ts";
+import {FilterButtons} from "./components/FilterButtons.tsx";
 
 type  Task = {
     id: string;
@@ -175,26 +176,31 @@ export const TodoItem = React.memo(({
                                                  onUpdateTask={onUpdateTask}
                 />
             ))}
-            <div style={{marginBottom: '10px'}}>
-                <button
-                    onClick={() => setFilter('all')}
-                    style={{fontWeight: filter === 'all' ? 'bold' : 'normal'}}
-                >
-                    All
-                </button>
-                <button
-                    onClick={() => setFilter('active')}
-                    style={{fontWeight: filter === 'active' ? 'bold' : 'normal'}}
-                >
-                    Active
-                </button>
-                <button
-                    onClick={() => setFilter('completed')}
-                    style={{fontWeight: filter === 'completed' ? 'bold' : 'normal'}}
-                >
-                    Completed
-                </button>
-            </div>
+
+            <FilterButtons
+                value={filter}
+                onChange={setFilter}
+            />
+            {/*<div style={{marginBottom: '10px'}}>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('all')}*/}
+            {/*        style={{fontWeight: filter === 'all' ? 'bold' : 'normal'}}*/}
+            {/*    >*/}
+            {/*        All*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('active')}*/}
+            {/*        style={{fontWeight: filter === 'active' ? 'bold' : 'normal'}}*/}
+            {/*    >*/}
+            {/*        Active*/}
+            {/*    </button>*/}
+            {/*    <button*/}
+            {/*        onClick={() => setFilter('completed')}*/}
+            {/*        style={{fontWeight: filter === 'completed' ? 'bold' : 'normal'}}*/}
+            {/*    >*/}
+            {/*        Completed*/}
+            {/*    </button>*/}
+            {/*</div>*/}
 
 
         </div>
