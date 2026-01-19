@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Button, TextField} from "@mui/material";
+import { IconButton, TextField} from "@mui/material";
 import AddTaskIcon from "@mui/icons-material/AddTask";
 import Box from "@mui/material/Box";
 
@@ -46,8 +46,10 @@ e.preventDefault()
                 }}
             />
 
-            <Button type='submit' size='small' startIcon={<AddTaskIcon />}
-                    disabled={!inputValue.trim() || !!error}></Button>
+            <IconButton  type='submit' aria-label="create"  size='small'
+                    disabled={!inputValue.trim() || !!error}>
+                <AddTaskIcon />
+            </IconButton>
 
         </Box>
         //html

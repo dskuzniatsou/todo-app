@@ -1,11 +1,14 @@
 import * as React from "react";
-import styles from './Todolist.module.css'
+
 import {AddTaskForm} from "./AddTaskForm.tsx";
 import {TaskItem} from "./TaskItem.tsx";
 import {useEffect, useState} from "react";
 import {useTodoProgress} from "./hooks/useTodoProgress.ts";
 import {useTaskFilter} from "./hooks/useTaskFilter.ts";
 import {FilterButtons} from "./components/FilterButtons.tsx";
+import {Checkbox, IconButton, Stack, TextField, Typography, LinearProgress, Paper, Box} from "@mui/material";
+
+import DeleteIcon from "@mui/icons-material/Delete";
 
 type  Task = {
     id: string;
@@ -40,51 +43,17 @@ export const TodoItem = React.memo(({
     const [isEditing, setIsEditing] = useState(false);
     const [title, setTitle] = useState(todo.text);
 
-    // useEffect(() => {
-    //     setTitle(todo.text);
-    // }, [todo.text]);
     useEffect(() => {
         if (!isEditing) {
             setTitle(todo.text);
         }
     }, [todo.text, isEditing]);
-    // const handleSave = () => {
-    //     const trimmed = title.trim();
-    //
-    //     if (trimmed) {
-    //         onUpdateTitle(todo.id, trimmed);
-    //     } else {
-    //         setTitle(todo.text); // откат если пусто
-    //     }
-    //
-    //     setIsEditing(false);
-    // };
-    //
-    // const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    //     if (e.key === 'Enter') {
-    //         handleSave();
-    //     }
-    //     if (e.key === 'Escape') {
-    //         setTitle(todo.text);
-    //         setIsEditing(false);
-    //     }
-    // };
 
     const {
         filter,
         visibleTasks,
         setFilter
     } = useTaskFilter(todo.tasks);
-
-    // const [filterTask, setFilterTask] = useState<TaskFilter>('all')
-    // const visibleTasks = useMemo(() => {
-    //     return todo.tasks.filter(task => {
-    //         if (filterTask === 'all') return true;
-    //         if (filterTask === 'active') return !task.completed;
-    //         if (filterTask === 'completed') return task.completed;
-    //         return true;
-    //     });
-    // }, [todo.tasks, filterTask]);
 // вынесли логику в хук useTodoProgress
     const {
         progress,
@@ -92,22 +61,6 @@ export const TodoItem = React.memo(({
         totalTasks,
         hasTasks
     } = useTodoProgress(todo);
-
-    // const totalTasks = todo.tasks.length;
-    // const completedTasks = todo.tasks.filter(t => t.completed).length;
-    //
-    //
-    // const progress = useMemo(() => {
-    //
-    //     const totalTasks = todo.tasks.length;
-    //
-    //     if (totalTasks === 0) {return todo.completed ? 100 : 0 }
-    //
-    //     const completedTasks = todo.tasks.filter(t => t.completed).length;
-    //
-    //    return  Math.round((completedTasks / totalTasks) * 100)
-    //
-    // }, [todo.tasks, todo.completed]);
 
     const startEdit = () => {
         setTitle(todo.text);
@@ -131,56 +84,86 @@ export const TodoItem = React.memo(({
         if (e.key === 'Enter') finishEdit();
         if (e.key === 'Escape') cancelEdit();
     };
+    const getProgressColor = (value: number) => {
+        if (value < 40) return "#f44336";   // red
+        if (value < 80) return "#ff9800";   // orange
+        return "#4caf50";                   // green
+    };
 
+    return (<Paper elevation={2} sx={{ p: 2, mr:2, mb:2,
+            // width: 'fit-content',    // Ширина под контент
+            height: 'fit-content',   // Высота под контент
+            alignSelf: 'flex-start' }}>
+            <Stack direction="row" alignItems="center" spacing={1}>
 
-    return (<div className={styles.todoItem}>
-            <div>
-                <input
-                    type="checkbox"
+                <Checkbox
+
                     checked={todo.completed}
                     disabled={hasTasks}
                     onChange={() => onToggle(todo.id)}
                 />
 
-
                 {isEditing ? (
-                    <input
+                    <TextField
                         value={title}
                         autoFocus
                         onChange={(e) => setTitle(e.target.value)}
                         onBlur={finishEdit}
                         onKeyDown={onKeyDown}
+                        sx={{ ml: 1, textAlign:"center" }}
                     />
                 ) : (
-                    <span onDoubleClick={startEdit}>
+                    <Typography onDoubleClick={startEdit}
+                                sx={{
+                                    cursor: "pointer",
+                                    userSelect: "none",
+                                    textDecoration: todo.completed ? "line-through" : "none",
+                                    opacity: todo.completed ? 0.6 : 1,
+                                }}>
                          {todo.text}
-                    </span>
+                    </Typography>
                 )}
-                <button onClick={() => onDelete(todo.id)}>X</button>
-            </div>
-            <div className={styles.progress}>
-                <div className={styles.progressFill} style={{width: `${progress}%`}}>
-                </div>
-            </div>
+                <IconButton aria-label="delete" onClick={()=>{onDelete(todo.id)}}>
+                           <DeleteIcon />
+                         </IconButton>
 
-            {hasTasks && <div style={{fontSize: '12px', color: '#666'}}>
-                {completedTasks} / {totalTasks}
-            </div>}
-            <AddTaskForm onAddTask={onAddTask} todoId={todo.id}/>
+            </Stack>
+            <Box mt={1}>
+                <LinearProgress variant="determinate" value={progress} sx={{
+                    height: 6,
+                    borderRadius: 3,
+                    backgroundColor:'lightgray',
+                    "& .MuiLinearProgress-bar": {
+                        backgroundColor: getProgressColor(progress),
+                        transition: "all 0.3s ease",
+                    },
+                }} />
+                {hasTasks && <Typography variant="caption" color="text.success">
+                    {completedTasks} / {totalTasks}
+                </Typography>}
+            </Box>
+            <Box mt={2}>
+                <AddTaskForm onAddTask={onAddTask} todoId={todo.id} />
+            </Box>
+            {/*<AddTaskForm onAddTask={onAddTask} todoId={todo.id}/>*/}
 
-            {visibleTasks.map(task => (<TaskItem key={task.id}
+            {visibleTasks.map(task => (
+                                            <TaskItem key={task.id}
                                                  todoId={todo.id}
                                                  task={task}
                                                  onToggle={onToggleTask}
                                                  onDelete={onDeleteTask}
                                                  onUpdateTask={onUpdateTask}
                 />
-            ))}
 
+
+            ))}
+        <Box mt={2}>
             <FilterButtons
                 value={filter}
                 onChange={setFilter}
             />
+        </Box>
             {/*<div style={{marginBottom: '10px'}}>*/}
             {/*    <button*/}
             {/*        onClick={() => setFilter('all')}*/}
@@ -203,7 +186,7 @@ export const TodoItem = React.memo(({
             {/*</div>*/}
 
 
-        </div>
+        </Paper>
 
     );
 });

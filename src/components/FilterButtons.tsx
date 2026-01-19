@@ -17,7 +17,7 @@ export const FilterButtons = ({value, onChange}:Props) => {
                 }
             }}
             size="small"
-            sx={{ mt: 1, mb: 1, gap:2, fontWeight: 'bold' }}
+            sx={{ mt: 1, mb: 1,  fontWeight: 'bold' }}
         >
             <ToggleButton value="all">All</ToggleButton>
             <ToggleButton value="active">Active</ToggleButton>

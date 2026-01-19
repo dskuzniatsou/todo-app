@@ -1,5 +1,6 @@
 import {TodoItem} from "./TodoItem.tsx";
-import styles from "./Todolist.module.css"
+import {Box, Grid, Stack} from "@mui/material";
+
 
 type  Task = {
     id: string;
@@ -20,18 +21,37 @@ type Props = {
     onAddTask: (todoId: string, text: string) => void;
     onToggleTask: (todoId: string, taskId: string) => void;
     onDeleteTask: (todoId: string, taskId: string) => void;
-    onUpdateTitle: (todoId:string, text: string) => void;
-    onUpdateTask: (todoId:string, taskId: string, text: string) => void;
+    onUpdateTitle: (todoId: string, text: string) => void;
+    onUpdateTask: (todoId: string, taskId: string, text: string) => void;
 };
 
-export const TodoList = ({todos, onToggle, onDelete, onUpdateTitle, onAddTask, onDeleteTask, onToggleTask, onUpdateTask}: Props) => {
+export const TodoList = ({
+                             todos,
+                             onToggle,
+                             onDelete,
+                             onUpdateTitle,
+                             onAddTask,
+                             onDeleteTask,
+                             onToggleTask,
+                             onUpdateTask
+                         }: Props) => {
     console.log("TodoList render");
     return (
-        <div className={styles.todolist}>
-            {todos.map(todo => (
-                <TodoItem todo={todo} key={todo.id} onToggle={onToggle} onDelete={onDelete} onUpdateTitle={onUpdateTitle}
-                          onAddTask={onAddTask} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask} onUpdateTask={onUpdateTask}/>
-            ))}
-        </div>
+        <Box sx={{width: "100%", mx: "auto", mt: '1rem'} }>
+            <Grid container spacing={2}  >
+                {todos.map(todo => (
+                    <Stack
+                        direction="row"      // ← Горизонтальное направление
+                        spacing={1}         // ← Отступы между элементами
+                        flexWrap="wrap"     // ← Ключевое: разрешает перенос на новые строки
+                        useFlexGap          // ← Оптимальные отступы (MUI v5.14+)
+                    >
+                        <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onDelete={onDelete} onUpdateTitle={onUpdateTitle}
+                                  onAddTask={onAddTask} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask}
+                                  onUpdateTask={onUpdateTask}/>
+                    </Stack>
+                ))}
+            </Grid>
+        </Box>
     );
 };

@@ -6,6 +6,7 @@ import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
 import {FilterButtons} from "./components/FilterButtons.tsx";
+import {Container} from "@mui/material";
 
 
 type  Task = {
@@ -203,37 +204,16 @@ export const  App = () => {
 
 
     return (
-        <div className={'app'}>
+        <Container maxWidth="lg">
             <Greeting name="Dmitriy"/>
             <AddForm onAdd={addTodo}  />
             <FilterButtons
                 value={filter}
                 onChange={setFilter}
             />
-            {/*//html*/}
-            {/*<div style={{ marginBottom: '10px' }}>*/}
-            {/*    <button*/}
-            {/*        onClick={() => setFilter('all')}*/}
-            {/*        style={{ fontWeight: filter === 'all' ? 'bold' : 'normal' }}*/}
-            {/*    >*/}
-            {/*        All*/}
-            {/*    </button>*/}
-            {/*    <button*/}
-            {/*        onClick={() => setFilter('active')}*/}
-            {/*        style={{ fontWeight: filter === 'active' ? 'bold' : 'normal' }}*/}
-            {/*    >*/}
-            {/*        Active*/}
-            {/*    </button>*/}
-            {/*    <button*/}
-            {/*        onClick={() => setFilter('completed')}*/}
-            {/*        style={{ fontWeight: filter === 'completed' ? 'bold' : 'normal' }}*/}
-            {/*    >*/}
-            {/*        Completed*/}
-            {/*    </button>*/}
-            {/*</div>*/}
             <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdateTitle={updateTodoTitle}
                       onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask} onUpdateTask={updateTask} />
 
-        </div>
+        </Container>
     );
 }
