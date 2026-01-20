@@ -94,7 +94,7 @@ export const TodoItem = React.memo(({
             // width: 'fit-content',    // Ширина под контент
             height: 'fit-content',   // Высота под контент
             alignSelf: 'flex-start' }}>
-            <Stack direction="row" alignItems="center" spacing={1}>
+            <Stack direction="row" alignItems="center" justifyContent='space-between'>
 
                 <Checkbox
 

@@ -1,4 +1,3 @@
-
 import './App.css'
 import {Greeting} from "./Greeting.tsx";
 import {useCallback, useEffect, useMemo, useState} from "react";
@@ -6,8 +5,9 @@ import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
 import {FilterButtons} from "./components/FilterButtons.tsx";
-import {Container} from "@mui/material";
-
+import {Container, Box} from "@mui/material";
+import {Header} from "./components/Header";
+import {ThemeProvider, createTheme, CssBaseline} from "@mui/material";
 
 type  Task = {
     id: string;
@@ -18,25 +18,41 @@ type Todo = {
     id: string;
     text: string;
     completed: boolean;
-    tasks:Task[]
+    tasks: Task[]
 };
 export type Filter = 'all' | 'active' | 'completed'
 
 
-export const  App = () => {
+export const App = () => {
     console.log("App render");
     const initialState = [
-        {id:uuid() , text:'Купить', completed:true, tasks: [{id: uuid(), text:'Молоко', completed: false}]},
-        {id:uuid()  , text:'by', completed:false, tasks: []},
-        {id:uuid()  , text:'pause', completed:true, tasks: []},
+        {id: uuid(), text: 'Купить', completed: true, tasks: [{id: uuid(), text: 'Молоко', completed: false}]},
+        {id: uuid(), text: 'by', completed: false, tasks: []},
+        {id: uuid(), text: 'pause', completed: true, tasks: []},
     ]
+    const [mode, setMode] = useState<'light' | 'dark'>(() => {
+        const saved = localStorage.getItem('theme');
+        return saved === 'dark' ? 'dark' : 'light';
+    });
+    const toggleTheme = () => {
+        setMode(prev => (prev === 'light' ? 'dark' : 'light'));
+    };
+    const theme = useMemo(
+        () =>
+            createTheme({
+                palette: {
+                    mode,
+                },
+            }),
+        [mode]
+    );
     // ---- Функция для первого рендера ----
     const getTodos = (): Todo[] => {
         const saved = localStorage.getItem('todos');
         return saved ? JSON.parse(saved) : initialState;
     };
 
-    const [todos,setTodos] = useState<Todo[]>(getTodos)
+    const [todos, setTodos] = useState<Todo[]>(getTodos)
     const [filter, setFilter] = useState<Filter>('all')
 
 // ---- Сохраняем изменения в localStorage ----
@@ -44,13 +60,17 @@ export const  App = () => {
         localStorage.setItem('todos', JSON.stringify(todos));
     }, [todos]);
 
+    useEffect(() => {
+        localStorage.setItem('theme', mode);
+    }, [mode]);
+
 // действия со списком задач
     const addTodo = useCallback((text: string) => {
-        const newTodo = {id: uuid(), text: text, completed: false,tasks: []}// создать новую тему
-       setTodos(todos=> [...todos,newTodo])
+        const newTodo = {id: uuid(), text: text, completed: false, tasks: []}// создать новую тему
+        setTodos(todos => [newTodo, ...todos])
         // обновить setTodos
     }, [])
-    const deleteTodo = useCallback((id:string) => {
+    const deleteTodo = useCallback((id: string) => {
         setTodos(prev =>
             prev.filter(todo =>
                 todo.id !== id
@@ -95,14 +115,14 @@ export const  App = () => {
         setTodos(prev =>
             prev.map(todo =>
                 todo.id === todoId
-                    ? { ...todo, text }
+                    ? {...todo, text}
                     : todo
             )
         );
     }, []);
 
 // действия с задачами
-        //добавление задачи
+    //добавление задачи
     // const addTask  = useCallback((todoId: string  , text: string) => {
     //     const newTask : Task = {id: uuid(), text: text, completed: false}
     //     setTodos(prev =>
@@ -135,14 +155,16 @@ export const  App = () => {
             })
         );
     }, []);
-        // удаление задачи
-    const deleteTask = useCallback((todoId: string  , taskId: string) => {
+    // удаление задачи
+    const deleteTask = useCallback((todoId: string, taskId: string) => {
         setTodos(prev =>
             prev.map(todo =>
                 todo.id === todoId
-                    ? {...todo,
-                        tasks: todo.tasks.filter(task =>task.id !==taskId)}
-                                     : todo
+                    ? {
+                        ...todo,
+                        tasks: todo.tasks.filter(task => task.id !== taskId)
+                    }
+                    : todo
             )
         );
     }, [])
@@ -160,7 +182,7 @@ export const  App = () => {
     //         )
     //     );
     // }, [])
-        // для автоматического включения чекбокса todo
+    // для автоматического включения чекбокса todo
     const toggleTask = useCallback((todoId: string, taskId: string) => {
         setTodos(prev =>
             prev.map(todo => {
@@ -168,7 +190,7 @@ export const  App = () => {
 
                 const updatedTasks = todo.tasks.map(task =>
                     task.id === taskId
-                        ? { ...task, completed: !task.completed }
+                        ? {...task, completed: !task.completed}
                         : task
                 );
 
@@ -193,7 +215,7 @@ export const  App = () => {
                         ...todo,
                         tasks: todo.tasks.map(task =>
                             task.id === taskId
-                                ? { ...task, text }
+                                ? {...task, text}
                                 : task
                         )
                     }
@@ -204,16 +226,30 @@ export const  App = () => {
 
 
     return (
-        <Container maxWidth="lg">
-            <Greeting name="Dmitriy"/>
-            <AddForm onAdd={addTodo}  />
-            <FilterButtons
-                value={filter}
-                onChange={setFilter}
-            />
-            <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo} onUpdateTitle={updateTodoTitle}
-                      onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask} onUpdateTask={updateTask} />
+        <div className="app">
 
-        </Container>
+            <ThemeProvider theme={theme}>
+                <CssBaseline/>
+                <Header mode={mode} toggleTheme={toggleTheme}/>
+
+            <Container  maxWidth="lg">
+                <Box sx={{mt: 2}}>
+
+                    <Greeting name="Dmitriy"/>
+                    <AddForm onAdd={addTodo}/>
+                    <FilterButtons
+                        value={filter}
+                        onChange={setFilter}
+                    />
+                    <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo}
+                              onUpdateTitle={updateTodoTitle}
+                              onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask}
+                              onUpdateTask={updateTask}/>
+                </Box>
+
+
+            </Container>
+            </ThemeProvider>
+        </div>
     );
 }

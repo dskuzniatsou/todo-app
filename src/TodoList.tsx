@@ -38,7 +38,7 @@ export const TodoList = ({
     console.log("TodoList render");
     return (
         <Box sx={{width: "100%", mx: "auto", mt: '1rem'} }>
-            <Grid container spacing={2}  >
+            <Grid container spacing={4}  >
                 {todos.map(todo => (
                     <Stack
                         direction="row"      // ← Горизонтальное направление
