@@ -15,7 +15,7 @@ type Props = {
 export const Header = ({mode, toggleTheme}: Props) => {
     return (
         <AppBar position="static">
-            <Toolbar>
+            <Toolbar sx={{ display: 'flex', justifyContent: 'space-between'}}>
                 <Container maxWidth={'lg'} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'  }}>
                     <Box  sx={{display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center'}}>
                         <IconButton color="inherit">
@@ -25,7 +25,7 @@ export const Header = ({mode, toggleTheme}: Props) => {
                             Todo App
                         </Typography>
                     </Box>
-                   <Box spacing={2}>
+                   <Box sx={{display: 'flex', flexDirection: 'row',gap: '10px', justifyContent: 'space-between'}} >
                        <IconButton color="inherit" onClick={toggleTheme}>
                            {mode === 'dark' ? <LightModeIcon/> : <DarkModeIcon/>}
                        </IconButton>

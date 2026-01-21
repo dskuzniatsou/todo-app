@@ -37,7 +37,7 @@ export const TodoList = ({
                          }: Props) => {
     console.log("TodoList render");
     return (
-        <Box sx={{width: "100%", mx: "auto", mt: '1rem'} }>
+        <Box sx={{width: "100%", ml: "2rem", mt: '1rem'} }>
             <Grid container spacing={4}  >
                 {todos.map(todo => (
                     <Stack

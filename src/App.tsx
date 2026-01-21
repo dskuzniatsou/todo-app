@@ -14,11 +14,11 @@ type  Task = {
     text: string;
     completed: boolean;
 }
-type Todo = {
+export type Todo = {
     id: string;
     text: string;
     completed: boolean;
-    tasks: Task[]
+    tasks?: Task[]
 };
 export type Filter = 'all' | 'active' | 'completed'
 
