@@ -21,7 +21,7 @@ export type Todo = {
     tasks: Task[]
 };
 export type Filter = 'all' | 'active' | 'completed'
-
+export type TasksState = Record<string, Task[]>
 
 export const App = () => {
     console.log("App render");
