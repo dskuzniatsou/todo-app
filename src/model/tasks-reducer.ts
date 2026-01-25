@@ -1,6 +1,6 @@
 import type {AddTodoAction, DeleteTodoAction} from "./todolists-reducer.ts";
 import type {TasksState} from "../App.tsx";
-import type {Todo} from "../types/typesTodo.ts";
+// import type {Todo} from "../types/typesTodo.ts";
 import uuid from "react-uuid";
 import type {Task} from "../TaskItem.tsx";
 /* ===================== INITIAL STATE ===================== */
@@ -43,16 +43,20 @@ export const tasksReducer = (state: TasksState = initialState, action: TaskActio
 
         // При создании новой задачи (todo) создаем пустой массив подзадач
         case 'ADD_TODO': {
-            const newTodoId = action.payload.id; // Предполагаем, что addTodoAC возвращает id
+
+const newTodoId = action.payload.id
             return {
                 ...state,
-                [newTodoId]: [], // Пустой массив для новой задачи
+                [newTodoId]: [], // action.payload должен содержать id
             };
+
         }
+
         // При удалении задачи (todo) удаляем и массив ее подзадач
         case 'DELETE_TODO': {
-            const { [action.payload.id]: removedTasks, ...restState } = state;
-            return restState;
+            const newState = { ...state }
+            delete newState[action.payload.id]
+            return newState
         }
         case 'ADD_TASK': {
             const { todoId, text } = action.payload;

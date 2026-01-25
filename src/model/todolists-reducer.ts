@@ -44,7 +44,8 @@ export const deleteTodoAC = (id: string) => {
     return {type: 'DELETE_TODO', payload: {id} } as const
 }
 export const addTodoAC = ( text: string) => {
-    return { type: 'ADD_TODO', payload: { text} } as const
+    const id = uuid(); // Генерируем ID здесь!
+    return { type: 'ADD_TODO', payload: { id, text} } as const
 }
 export const toggleTodoAC = (id: string) => {
     return {type: 'TOGGLE_TODO', payload: {id} } as const
@@ -70,7 +71,7 @@ type TodoAction = DeleteTodoAction | AddTodoAction | ToggleTodoAction | UpdateTi
 export const todolistsReducer = (state: TodoState = initialState, action: TodoAction): TodoState => {
     switch (action.type) {
         case 'ADD_TODO': {
-            const newTodo: Todo = {id: uuid(), text: action.payload.text, completed: false, tasks: []}// создать новую тему
+            const newTodo: Todo = {id: action.payload.id, text: action.payload.text, completed: false, tasks: []}// создать новую тему
             return {
                 ...state,
                 todos: [newTodo, ...state.todos],

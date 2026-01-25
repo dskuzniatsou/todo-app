@@ -37,8 +37,11 @@ beforeEach(() => {
         }
     )
     test ('addTodo создает правильный action', () => {
+
             const text = 'new todo'
-        const endState = todolistsReducer(startState, addTodoAC(text))
+        const action = addTodoAC(text)
+        const todoId = action.payload.id
+        const endState = todolistsReducer(startState,action )
 
         expect(endState.todos.length).toBe(3)
         expect(endState.todos[0].text).toBe(text)
