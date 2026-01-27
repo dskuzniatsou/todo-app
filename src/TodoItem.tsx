@@ -9,6 +9,7 @@ import {FilterButtons} from "./components/FilterButtons.tsx";
 import {Checkbox, IconButton, Stack, TextField, Typography, LinearProgress, Paper, Box} from "@mui/material";
 
 import DeleteIcon from "@mui/icons-material/Delete";
+import {AddForm} from "./AddForm.tsx";
 
 type  Task = {
     id: string;
@@ -26,6 +27,7 @@ type Todo = {
 
 type Props = {
     todo: Todo;
+    tasks: Task[];
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
     onAddTask: (todoId: string, text: string) => void;
@@ -143,6 +145,7 @@ export const TodoItem = React.memo(({
                 </Typography>}
             </Box>
             <Box mt={2}>
+
                 <AddTaskForm onAddTask={onAddTask} todoId={todo.id} />
             </Box>
             {/*<AddTaskForm onAddTask={onAddTask} todoId={todo.id}/>*/}
@@ -150,7 +153,7 @@ export const TodoItem = React.memo(({
             {visibleTasks.map(task => (
                                             <TaskItem key={task.id}
                                                  todoId={todo.id}
-                                                 task={task}
+                                                      task={task}
                                                  onToggle={onToggleTask}
                                                  onDelete={onDeleteTask}
                                                  onUpdateTask={onUpdateTask}

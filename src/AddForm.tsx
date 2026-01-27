@@ -3,33 +3,42 @@ import Box from "@mui/material/Box";
 import {IconButton, TextField} from "@mui/material";
 import AddTaskIcon from '@mui/icons-material/AddTask';
 type Props = {
-    onAdd: (text: string) => void;
+    onAddItem: (title: string) => void;
 };
 
-export const AddForm = ({onAdd}: Props) => {
+export const AddForm = ({onAddItem}: Props) => {
     const [inputValue, setInputValue] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null)
 
-    const handleAdd = (e: React.FormEvent<HTMLFormElement>) => {
+    const addItemHandler = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
-        const trimmed = inputValue.trim();
-        if (!trimmed) {
+        const trimmedTitle = inputValue.trim();
+        if (!trimmedTitle) {
             setError("Поле не может быть пустым");
             return;
         }
-        onAdd(inputValue);
+        onAddItem(trimmedTitle);
         setInputValue('');
         setError('');
     }
+    // const createItemOnEnterHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+    //     if (event.key === 'Enter') {
+    //        addItemHandler()
+    //     }
+    // }
+    // const changeTitleHandler = (event: ChangeEvent<HTMLInputElement>) => {
+    //     setInputValue(event.currentTarget.value)
+    //     setError(null)
+    // }
 
     return (
         // material-ui
         <Box component="form"
-             onSubmit={handleAdd}
+             onSubmit={addItemHandler}
              sx={{display: "flex", alignContent: 'center', justifyContent: 'center', gap: 1, mb: 2}}>
             <TextField
                 size='small'
-                label='Новый список'
+                label={'Enter a title'}
                 value={inputValue}
                 error={!!error}
                 helperText={error}
@@ -43,7 +52,7 @@ export const AddForm = ({onAdd}: Props) => {
                     }
                 }}
             />
-            <IconButton type='submit' aria-label="create"  size='large'
+            <IconButton type='submit' aria-label="create"  size='large' color={'primary'}
                          disabled={!inputValue.trim() || !!error}>
                 <AddTaskIcon />
             </IconButton>

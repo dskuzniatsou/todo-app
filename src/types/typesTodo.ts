@@ -8,8 +8,8 @@ export type Task = {
 export type Todo = {
     id: string;
     text: string;
-    completed: boolean;
-    tasks: Task[]; // убираем опциональность, всегда массив
+    filter: boolean;
+
 };
 
 export type Filter = 'all' | 'active' | 'completed';

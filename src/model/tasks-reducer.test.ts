@@ -3,7 +3,7 @@ import {beforeEach, test, expect} from "vitest";
 import type {TasksState} from "../App.tsx";
 import {addTaskAC, deleteTaskAC, tasksReducer, toggleTaskAC, updateTitleTaskAC} from "./tasks-reducer.ts";
 import { addTodoAC, deleteTodoAC } from "./todolists-reducer.ts";
-import uuid from "react-uuid";
+
 
 
 let startState: TasksState = {}

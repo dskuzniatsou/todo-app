@@ -1,255 +1,177 @@
 import './App.css'
 import {Greeting} from "./Greeting.tsx";
-import {useCallback, useEffect, useMemo, useState} from "react";
-import uuid from 'react-uuid';
+import {useCallback, useEffect, useMemo, useReducer, useState} from "react";
+// import uuid from 'react-uuid';
 import {AddForm} from "./AddForm.tsx";
 import {TodoList} from "./TodoList.tsx";
 import {FilterButtons} from "./components/FilterButtons.tsx";
 import {Container, Box} from "@mui/material";
 import {Header} from "./components/Header";
 import {ThemeProvider, createTheme, CssBaseline} from "@mui/material";
+import {
+    addTodoAC,
+    changeTodoFilterAC,
+    deleteTodoAC,
+    todolistsReducer,
+    toggleTodoAC,
+    updateTitleTodoAC
+} from "./model/todolists-reducer.ts";
 
+import {addTaskAC, deleteTaskAC, tasksReducer, toggleTaskAC, updateTitleTaskAC} from "./model/tasks-reducer.ts";
+
+
+/* ========================= TYPES ========================== */
+export type Todolist = {
+    id: string;
+    title: string;
+    filter: FilterValues
+};
 type  Task = {
     id: string;
     text: string;
     completed: boolean;
 }
-export type Todo = {
-    id: string;
-    text: string;
-    completed: boolean;
-    tasks: Task[]
-};
-export type Filter = 'all' | 'active' | 'completed'
+export type FilterValues = 'all' | 'active' | 'completed'
 export type TasksState = Record<string, Task[]>
+
+type ThemeMode = 'dark' | 'light'
+
 
 export const App = () => {
     console.log("App render");
-    const initialState = [
-        {id: uuid(), text: 'Купить', completed: true, tasks: [{id: uuid(), text: 'Молоко', completed: false}]},
-        {id: uuid(), text: 'by', completed: false, tasks: []},
-        {id: uuid(), text: 'pause', completed: true, tasks: []},
-    ]
-    const [mode, setMode] = useState<'light' | 'dark'>(() => {
+
+    const [todolists, dispatchToTodolists] = useReducer(todolistsReducer, [])
+    const [tasks, setTasks] = useState<TasksState>({})
+    const [filter, setFilter] = useState<FilterValues>('all')
+
+    /* ===================== THEME ===================== */
+
+    const [themeMode, setThemeMode] = useState<ThemeMode>(() => {
         const saved = localStorage.getItem('theme');
         return saved === 'dark' ? 'dark' : 'light';
     });
-    const toggleTheme = () => {
-        setMode(prev => (prev === 'light' ? 'dark' : 'light'));
-    };
     const theme = useMemo(
         () =>
             createTheme({
                 palette: {
-                    mode,
+                    mode: themeMode,
+                    primary: {
+                        main: '#c64904',
+                    }
                 },
             }),
-        [mode]
+        [themeMode]
     );
-    // ---- Функция для первого рендера ----
-    const getTodos = (): Todo[] => {
-        const saved = localStorage.getItem('todos');
-        return saved ? JSON.parse(saved) : initialState;
+    const toggleTheme = () => {
+        setThemeMode(themeMode === 'light' ? 'dark' : 'light');
     };
 
-    const [todos, setTodos] = useState<Todo[]>(getTodos)
-    const [filter, setFilter] = useState<Filter>('all')
 
-// ---- Сохраняем изменения в localStorage ----
-    useEffect(() => {
-        localStorage.setItem('todos', JSON.stringify(todos));
-    }, [todos]);
 
+
+
+    // ---- Функция для первого рендера ----
+    // const getTodos = (): Todo[] => {
+    //     const saved = localStorage.getItem('todos');
+    //     return saved ? JSON.parse(saved) : initialState;
+    // };
+
+    // const [todos, setTodos] = useState<Todo[]>(getTodos)
+//     const [todos, dispatchTodos] = useReducer(todolistsReducer, getTodos)
+//     const [filter, setFilter] = useState<Filter>('all')
+//
+// // ---- Сохраняем изменения в localStorage ----
+//     useEffect(() => {
+//         localStorage.setItem('todos', JSON.stringify(todos));
+//     }, [todos]);
+
+    /* ===================== EFFECTS ===================== */
     useEffect(() => {
-        localStorage.setItem('theme', mode);
-    }, [mode]);
+        localStorage.setItem('theme', themeMode);
+    }, [themeMode]);
 
 // действия со списком задач
+    /* ===================== TODOS ===================== */
+
     const addTodo = useCallback((text: string) => {
-        const newTodo = {id: uuid(), text: text, completed: false, tasks: []}// создать новую тему
-        setTodos(todos => [newTodo, ...todos])
-        // обновить setTodos
-    }, [])
+        // const action = addTodoAC(text);
+        dispatchTodo(addTodoAC(text));
+        dispatchTasks(addTodoAC(text));
+    }, []);
+
     const deleteTodo = useCallback((id: string) => {
-        setTodos(prev =>
-            prev.filter(todo =>
-                todo.id !== id
-            )
-        );
-    }, [])
+        // const action = deleteTodoAC(id);
+        dispatchTodo(deleteTodoAC(id));
+        dispatchTasks(deleteTodoAC(id));
+    }, []);
+
+    const toggleTodo = useCallback((id: string) => {
+        dispatchTodo(toggleTodoAC(id));
+    }, []);
+
+    const updateTodoTitle = useCallback((id: string, text: string) => {
+        dispatchTodo(updateTitleTodoAC(id, text));
+    }, []);
+
+    const changeFilter = useCallback((value: typeof filter) => {
+        dispatchTodo(changeTodoFilterAC(value));
+    }, []);
+
+
+    /* ===================== FILTERED TODOS ===================== */
 
     const filteredTodos = useMemo(() => {
         return todos.filter(todo => {
-            if (filter === 'all') return true;
-            if (filter === 'active') return !todo.completed;
-            if (filter === 'completed') return todo.completed;
+
+            if (filter === 'active') return !todo.filter;
+            if (filter === 'completed') return todo.filter;
             return true;
         });
     }, [todos, filter]);
 
-    // const toggleTodo = useCallback((id:string)=> {
-    //     setTodos(prev =>
-    //         prev.map(todo =>
-    //             todo.id === id ? { ...todo, completed: !todo.completed } : todo
-    //         )
-    //     );
-    // }, [])
-// для автоматического переключения чекбокса todo
-    const toggleTodo = useCallback((todoId: string) => {
-        setTodos(prev =>
-            prev.map(todo => {
-                if (todo.id !== todoId) return todo;
+    /* ===================== TASKS ===================== */
 
-                // ❗ если есть задачи — запрещаем ручное переключение
-                if (todo.tasks.length > 0) return todo;
-
-                return {
-                    ...todo,
-                    completed: !todo.completed,
-                };
-            })
-        );
-    }, []);
-
-    const updateTodoTitle = useCallback((todoId: string, text: string) => {
-        setTodos(prev =>
-            prev.map(todo =>
-                todo.id === todoId
-                    ? {...todo, text}
-                    : todo
-            )
-        );
-    }, []);
-
-// действия с задачами
-    //добавление задачи
-    // const addTask  = useCallback((todoId: string  , text: string) => {
-    //     const newTask : Task = {id: uuid(), text: text, completed: false}
-    //     setTodos(prev =>
-    //         prev.map(todo =>
-    //             todo.id === todoId
-    //                 ? { ...todo, tasks: [...todo.tasks, newTask] }
-    //                 : todo
-    //         )
-    //     );
-    // }, [])
-// добавление задачи и автоматическая проверка
     const addTask = useCallback((todoId: string, text: string) => {
-        const newTask = {
-            id: uuid(),
-            text,
-            completed: false,
-        };
-
-        setTodos(prev =>
-            prev.map(todo => {
-                if (todo.id !== todoId) return todo;
-
-                const updatedTasks = [...todo.tasks, newTask];
-
-                return {
-                    ...todo,
-                    tasks: updatedTasks,
-                    completed: false, // 🔥 ключевой момент
-                };
-            })
-        );
+        dispatchTasks(addTaskAC(todoId, text));
     }, []);
-    // удаление задачи
+
     const deleteTask = useCallback((todoId: string, taskId: string) => {
-        setTodos(prev =>
-            prev.map(todo =>
-                todo.id === todoId
-                    ? {
-                        ...todo,
-                        tasks: todo.tasks.filter(task => task.id !== taskId)
-                    }
-                    : todo
-            )
-        );
-    }, [])
-    // переключение чекбокса
-    // const toggleTask = useCallback((todoId: string  , taskId: string)=> {
-    //     setTodos(prev =>
-    //         prev.map(todo =>
-    //             todo.id === todoId
-    //                 ? {...todo,
-    //                 tasks: todo.tasks.map(task =>
-    //                         task.id === taskId
-    //                             ? { ...task, completed: !task.completed}
-    //                             : task)}  : todo
-    //
-    //         )
-    //     );
-    // }, [])
-    // для автоматического включения чекбокса todo
+        dispatchTasks(deleteTaskAC(todoId, taskId));
+    }, []);
+
     const toggleTask = useCallback((todoId: string, taskId: string) => {
-        setTodos(prev =>
-            prev.map(todo => {
-                if (todo.id !== todoId) return todo;
-
-                const updatedTasks = todo.tasks.map(task =>
-                    task.id === taskId
-                        ? {...task, completed: !task.completed}
-                        : task
-                );
-
-                const todoCompleted =
-                    updatedTasks.length > 0 &&
-                    updatedTasks.every(task => task.completed);
-
-                return {
-                    ...todo,
-                    tasks: updatedTasks,
-                    completed: todoCompleted,
-                };
-            })
-        );
+        dispatchTasks(toggleTaskAC(todoId, taskId));
     }, []);
-    // редактирование задачи
+
     const updateTask = useCallback((todoId: string, taskId: string, text: string) => {
-        setTodos(prev =>
-            prev.map(todo =>
-                todo.id === todoId
-                    ? {
-                        ...todo,
-                        tasks: todo.tasks.map(task =>
-                            task.id === taskId
-                                ? {...task, text}
-                                : task
-                        )
-                    }
-                    : todo
-            )
-        );
+        dispatchTasks(updateTitleTaskAC(todoId, taskId, text));
     }, []);
-
 
     return (
+        <ThemeProvider theme={theme}>
         <div className="app">
-
-            <ThemeProvider theme={theme}>
                 <CssBaseline/>
-                <Header mode={mode} toggleTheme={toggleTheme}/>
+                <Header themeMode={themeMode} toggleTheme={toggleTheme}/>
 
             <Container  maxWidth="lg">
                 <Box sx={{mt: 2}}>
 
                     <Greeting name="Dmitriy"/>
-                    <AddForm onAdd={addTodo}/>
+
+                    <AddForm onAddItem={addTodo}/>
                     <FilterButtons
                         value={filter}
-                        onChange={setFilter}
+                        onChange={changeFilter}
                     />
                     <TodoList todos={filteredTodos} onToggle={toggleTodo} onDelete={deleteTodo}
-                              onUpdateTitle={updateTodoTitle}
+                              onUpdateTitle={updateTodoTitle} tasks={tasksState}
                               onToggleTask={toggleTask} onDeleteTask={deleteTask} onAddTask={addTask}
                               onUpdateTask={updateTask}/>
                 </Box>
 
 
             </Container>
-            </ThemeProvider>
         </div>
+</ThemeProvider>
     );
 }

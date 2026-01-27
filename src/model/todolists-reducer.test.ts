@@ -20,8 +20,8 @@ beforeEach(() => {
 
     startState = {
         todos: [
-            {id: todolistId1, text: 'What to learn', completed: false, tasks: []},
-            {id: todolistId2, text: 'What to buy', completed: true, tasks: []},
+            {id: todolistId1, text: 'What to learn', filter: false, tasks: []},
+            {id: todolistId2, text: 'What to buy', filter: true, tasks: []},
         ],
         filter: 'active',
     };
@@ -40,7 +40,7 @@ beforeEach(() => {
 
             const text = 'new todo'
         const action = addTodoAC(text)
-        const todoId = action.payload.id
+        // const todoId = action.payload.id
         const endState = todolistsReducer(startState,action )
 
         expect(endState.todos.length).toBe(3)
@@ -52,8 +52,8 @@ beforeEach(() => {
 test ('correct todo should be toggled',()=> {
     const endState = todolistsReducer(startState, toggleTodoAC(todolistId2))
 
-    expect(endState.todos[0].completed).toBe(false) // Первый не изменился
-    expect(endState.todos[1].completed).toBe(false) // Второй изменился с true на false
+    expect(endState.todos[0].filter).toBe(false) // Первый не изменился
+    expect(endState.todos[1].filter).toBe(false) // Второй изменился с true на false
 
 })
     test('correct todolist should change its filter', () => {

@@ -1,5 +1,6 @@
 import {TodoItem} from "./TodoItem.tsx";
 import {Box, Grid, Stack} from "@mui/material";
+import type {TasksState} from "./App.tsx";
 
 
 type  Task = {
@@ -16,6 +17,7 @@ type Todo = {
 
 type Props = {
     todos: Todo[];
+    tasks: TasksState;
     onToggle: (id: string) => void;
     onDelete: (id: string) => void;
     onAddTask: (todoId: string, text: string) => void;
@@ -27,6 +29,7 @@ type Props = {
 
 export const TodoList = ({
                              todos,
+                             tasks,
                              onToggle,
                              onDelete,
                              onUpdateTitle,
@@ -37,8 +40,8 @@ export const TodoList = ({
                          }: Props) => {
     console.log("TodoList render");
     return (
-        <Box sx={{width: "100%", ml: "2rem", mt: '1rem'} }>
-            <Grid container spacing={4}  >
+        <Box sx={{width: "100%", ml: "2rem", mt: '1rem'}}>
+            <Grid container spacing={4}>
                 {todos.map(todo => (
                     <Stack
                         direction="row"      // ← Горизонтальное направление
@@ -46,7 +49,8 @@ export const TodoList = ({
                         flexWrap="wrap"     // ← Ключевое: разрешает перенос на новые строки
                         useFlexGap          // ← Оптимальные отступы (MUI v5.14+)
                     >
-                        <TodoItem key={todo.id} todo={todo} onToggle={onToggle} onDelete={onDelete} onUpdateTitle={onUpdateTitle}
+                        <TodoItem key={todo.id} todo={todo} tasks={tasks[todo.id] || []} onToggle={onToggle}
+                                  onDelete={onDelete} onUpdateTitle={onUpdateTitle}
                                   onAddTask={onAddTask} onDeleteTask={onDeleteTask} onToggleTask={onToggleTask}
                                   onUpdateTask={onUpdateTask}/>
                     </Stack>

@@ -6,15 +6,16 @@ import Toolbar from '@mui/material/Toolbar'
 import Button from '@mui/material/Button'
 import IconButton from '@mui/material/IconButton'
 import MenuIcon from '@mui/icons-material/Menu'
+import {NavButton} from "../NuvButton.ts";
 
 type Props = {
-    mode: 'light' | 'dark';
+    themeMode: 'light' | 'dark';
     toggleTheme: () => void;
 }
 
-export const Header = ({mode, toggleTheme}: Props) => {
+export const Header = ({themeMode, toggleTheme}: Props) => {
     return (
-        <AppBar position="static">
+        <AppBar position="static" sx={{mb: '30px'}}>
             <Toolbar sx={{ display: 'flex', justifyContent: 'space-between'}}>
                 <Container maxWidth={'lg'} sx={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between'  }}>
                     <Box  sx={{display: 'flex', flexDirection: 'row', gap: '10px', alignItems: 'center'}}>
@@ -27,8 +28,10 @@ export const Header = ({mode, toggleTheme}: Props) => {
                     </Box>
                    <Box sx={{display: 'flex', flexDirection: 'row',gap: '10px', justifyContent: 'space-between'}} >
                        <IconButton color="inherit" onClick={toggleTheme}>
-                           {mode === 'dark' ? <LightModeIcon/> : <DarkModeIcon/>}
+                           {themeMode === 'dark' ? <LightModeIcon/> : <DarkModeIcon/>}
                        </IconButton>
+                       <NavButton variant='outlined'>Sign in</NavButton>
+                       <NavButton>Sign up</NavButton>
                        <Button color="inherit" variant='outlined'>Sign in</Button>
                    </Box>
 

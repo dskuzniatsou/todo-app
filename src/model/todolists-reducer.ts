@@ -71,7 +71,7 @@ type TodoAction = DeleteTodoAction | AddTodoAction | ToggleTodoAction | UpdateTi
 export const todolistsReducer = (state: TodoState = initialState, action: TodoAction): TodoState => {
     switch (action.type) {
         case 'ADD_TODO': {
-            const newTodo: Todo = {id: action.payload.id, text: action.payload.text, completed: false, tasks: []}// создать новую тему
+            const newTodo: Todo = {id: action.payload.id, text: action.payload.text, filter: false, tasks: []}// создать новую тему
             return {
                 ...state,
                 todos: [newTodo, ...state.todos],
@@ -93,7 +93,7 @@ export const todolistsReducer = (state: TodoState = initialState, action: TodoAc
 
                     return {
                         ...todo,
-                        completed: !todo.completed,
+                        filter: !todo.filter,
                     };
                 }),
             };
