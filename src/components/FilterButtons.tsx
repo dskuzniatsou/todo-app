@@ -1,8 +1,8 @@
 import {ToggleButton, ToggleButtonGroup} from "@mui/material";
-import type {Filter} from '../App'
+import type {FilterValues} from '../App'
 type Props = {
-    value: Filter;
-    onChange: (value: Filter) => void;
+    value: FilterValues;
+    onChange: (value: FilterValues) => void;
 };
 export const FilterButtons = ({value, onChange}:Props) => {
 

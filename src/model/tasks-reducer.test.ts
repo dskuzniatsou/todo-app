@@ -11,14 +11,14 @@ let startState: TasksState = {}
 beforeEach(() => {
     startState = {
         todolistId1: [
-            {id: '1', text: 'CSS', completed: false},
-            {id: '2', text: 'JS', completed: true},
-            {id: '3', text: 'React', completed: false},
+            {id: '1', title: 'CSS', completed: false},
+            {id: '2', title: 'JS', completed: true},
+            {id: '3', title: 'React', completed: false},
         ],
         todolistId2: [
-            {id: '1', text: 'bread', completed: false},
-            {id: '2', text: 'milk', completed: true},
-            {id: '3', text: 'tea', completed: false},
+            {id: '1', title: 'bread', completed: false},
+            {id: '2', title: 'milk', completed: true},
+            {id: '3', title: 'tea', completed: false},
         ],
     }
 })
@@ -52,7 +52,7 @@ test('should add task to todo', () => {
     const endState = tasksReducer(startState, addTaskAC('todolistId1', 'Яйца'));
 
     expect(endState['todolistId1']).toHaveLength(4);
-    expect(endState['todolistId1'][3].text).toBe('Яйца');
+    expect(endState['todolistId1'][3].title).toBe('Яйца');
     expect(endState['todolistId1'][3].completed).toBe(false);
 })
 test("todolist should be deleted", () => {
@@ -88,6 +88,6 @@ test('should update  task  title', () => {
 
     const endState = tasksReducer(startState, updateTitleTaskAC('todolistId1', '3', "COCO"));
 
-    expect(endState['todolistId1'][2].text).toBe("COCO"); // Было false
+    expect(endState['todolistId1'][2].title).toBe("COCO"); // Было false
     expect(endState['todolistId1'][1].completed).toBe(true); // Осталось true
 });

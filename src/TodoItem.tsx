@@ -2,7 +2,7 @@ import * as React from "react";
 
 import {AddTaskForm} from "./AddTaskForm.tsx";
 import {TaskItem} from "./TaskItem.tsx";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {useTodoProgress} from "./hooks/useTodoProgress.ts";
 import {useTaskFilter} from "./hooks/useTaskFilter.ts";
 import {FilterButtons} from "./components/FilterButtons.tsx";
@@ -10,52 +10,20 @@ import {Checkbox, IconButton, Stack, TextField, Typography, LinearProgress, Pape
 
 import DeleteIcon from "@mui/icons-material/Delete";
 import {AddForm} from "./AddForm.tsx";
-
-type  Task = {
-    id: string;
-    text: string;
-    completed: boolean;
-}
-type Todo = {
-    id: string;
-    text: string;
-    completed: boolean;
-    tasks: Task[]
-};
-// type TaskFilter = 'all' | 'active' | 'completed'
-
+import {TodolistTitle} from "./TodolistTitle.tsx";
+import type {Todolist} from "./App.tsx";
+import {Tasks} from "./Tasks.tsx";
+import {addTaskAC} from "./model/tasks-reducer.ts";
+import {toggleTodoAC} from "./model/todolists-reducer.ts";
 
 type Props = {
-    todo: Todo;
-    tasks: Task[];
-    onToggle: (id: string) => void;
-    onDelete: (id: string) => void;
-    onAddTask: (todoId: string, text: string) => void;
-    onUpdateTitle: (todoId: string, text: string) => void;
-    onToggleTask: (todoId: string, taskId: string) => void;
-    onDeleteTask: (todoId: string, taskId: string) => void;
-    onUpdateTask: (todoId:string, taskId: string, text: string) => void;
-};
+    todolist: Todolist
+}
+export const TodoItem = React.memo(({todolist}: Props) => {
+    console.log("TodoItem render:", todolist.title);
 
-export const TodoItem = React.memo(({
-                                        todo, onToggle, onDelete, onUpdateTitle,
-                                        onAddTask, onToggleTask, onDeleteTask, onUpdateTask
-                                    }: Props) => {
-    console.log("TodoItem render:", todo.text);
-    const [isEditing, setIsEditing] = useState(false);
-    const [title, setTitle] = useState(todo.text);
 
-    useEffect(() => {
-        if (!isEditing) {
-            setTitle(todo.text);
-        }
-    }, [todo.text, isEditing]);
 
-    const {
-        filter,
-        visibleTasks,
-        setFilter
-    } = useTaskFilter(todo.tasks);
 // вынесли логику в хук useTodoProgress
     const {
         progress,
@@ -63,29 +31,35 @@ export const TodoItem = React.memo(({
         totalTasks,
         hasTasks
     } = useTodoProgress(todo);
+    const addTask = useCallback((todoId: string, text: string) => {
+        dispatch(addTaskAC(todoId, text));
+    }, []);
+    // const startEdit = () => {
+    //     setTitle(todo.text);
+    //     setIsEditing(true);
+    // };
 
-    const startEdit = () => {
-        setTitle(todo.text);
-        setIsEditing(true);
-    };
+    // const finishEdit = () => {
+    //     const trimmed = title.trim();
+    //     if (trimmed) {
+    //         onUpdateTitle(todo.id, trimmed);
+    //     }
+    //     console.log('finishEdit');
+    //     setIsEditing(false);
+    // };
+    //
+    // const cancelEdit = () => {
+    //     setTitle(todo.text);
+    //     setIsEditing(false);
+    // };
+    // const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    //     if (e.key === 'Enter') finishEdit();
+    //     if (e.key === 'Escape') cancelEdit();
+    // };
+    const toggleTodo = useCallback((id: string) => {
+        dispatchTodo(toggleTodoAC(id));
+    }, []);
 
-    const finishEdit = () => {
-        const trimmed = title.trim();
-        if (trimmed) {
-            onUpdateTitle(todo.id, trimmed);
-        }
-        console.log('finishEdit');
-        setIsEditing(false);
-    };
-
-    const cancelEdit = () => {
-        setTitle(todo.text);
-        setIsEditing(false);
-    };
-    const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') finishEdit();
-        if (e.key === 'Escape') cancelEdit();
-    };
     const getProgressColor = (value: number) => {
         if (value < 40) return "#f44336";   // red
         if (value < 80) return "#ff9800";   // orange
@@ -99,51 +73,52 @@ export const TodoItem = React.memo(({
             <Stack direction="row" alignItems="center" justifyContent='space-between'>
 
                 <Checkbox
-
-                    checked={todo.completed}
+                    checked={todolist.filter}
                     disabled={hasTasks}
                     onChange={() => onToggle(todo.id)}
                 />
 
-                {isEditing ? (
-                    <TextField
-                        value={title}
-                        autoFocus
-                        onChange={(e) => setTitle(e.target.value)}
-                        onBlur={finishEdit}
-                        onKeyDown={onKeyDown}
-                        sx={{ ml: 1, textAlign:"center" }}
-                    />
-                ) : (
-                    <Typography onDoubleClick={startEdit}
-                                sx={{
-                                    cursor: "pointer",
-                                    userSelect: "none",
-                                    textDecoration: todo.completed ? "line-through" : "none",
-                                    opacity: todo.completed ? 0.6 : 1,
-                                }}>
-                         {todo.text}
-                    </Typography>
-                )}
-                <IconButton aria-label="delete" onClick={()=>{onDelete(todo.id)}}>
-                           <DeleteIcon />
-                         </IconButton>
+                {/*{isEditing ? (*/}
+                {/*    <TextField*/}
+                {/*        value={title}*/}
+                {/*        autoFocus*/}
+                {/*        onChange={(e) => setTitle(e.target.value)}*/}
+                {/*        onBlur={finishEdit}*/}
+                {/*        onKeyDown={onKeyDown}*/}
+                {/*        sx={{ ml: 1, textAlign:"center" }}*/}
+                {/*    />*/}
+                {/*) : (*/}
+                {/*    <Typography onDoubleClick={startEdit}*/}
+                {/*                sx={{*/}
+                {/*                    cursor: "pointer",*/}
+                {/*                    userSelect: "none",*/}
+                {/*                    textDecoration: todo.completed ? "line-through" : "none",*/}
+                {/*                    opacity: todo.completed ? 0.6 : 1,*/}
+                {/*                }}>*/}
+                {/*         {todo.text}*/}
+                {/*    </Typography>*/}
+                {/*)}*/ }
 
+                <TodolistTitle todolist={todolist}/>
+                <AddForm onAddItem={addTask}/>
+                <Tasks todolist={todolist}/>
+                <FilterButtons value={filter}
+                               onChange={setFilter} />
             </Stack>
-            <Box mt={1}>
-                <LinearProgress variant="determinate" value={progress} sx={{
-                    height: 6,
-                    borderRadius: 3,
-                    backgroundColor:'lightgray',
-                    "& .MuiLinearProgress-bar": {
-                        backgroundColor: getProgressColor(progress),
-                        transition: "all 0.3s ease",
-                    },
-                }} />
-                {hasTasks && <Typography variant="caption" color="text.success">
-                    {completedTasks} / {totalTasks}
-                </Typography>}
-            </Box>
+            {/*<Box mt={1}>*/}
+            {/*    <LinearProgress variant="determinate" value={progress} sx={{*/}
+            {/*        height: 6,*/}
+            {/*        borderRadius: 3,*/}
+            {/*        backgroundColor:'lightgray',*/}
+            {/*        "& .MuiLinearProgress-bar": {*/}
+            {/*            backgroundColor: getProgressColor(progress),*/}
+            {/*            transition: "all 0.3s ease",*/}
+            {/*        },*/}
+            {/*    }} />*/}
+            {/*    {hasTasks && <Typography variant="caption" color="text.success">*/}
+            {/*        {completedTasks} / {totalTasks}*/}
+            {/*    </Typography>}*/}
+            {/*</Box>*/}
             <Box mt={2}>
 
                 <AddTaskForm onAddTask={onAddTask} todoId={todo.id} />

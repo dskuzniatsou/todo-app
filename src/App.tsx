@@ -26,9 +26,9 @@ export type Todolist = {
     title: string;
     filter: FilterValues
 };
-type  Task = {
+export type  Task = {
     id: string;
-    text: string;
+    title: string;
     completed: boolean;
 }
 export type FilterValues = 'all' | 'active' | 'completed'
@@ -99,19 +99,9 @@ export const App = () => {
         dispatchTasks(addTodoAC(text));
     }, []);
 
-    const deleteTodo = useCallback((id: string) => {
-        // const action = deleteTodoAC(id);
-        dispatchTodo(deleteTodoAC(id));
-        dispatchTasks(deleteTodoAC(id));
-    }, []);
 
-    const toggleTodo = useCallback((id: string) => {
-        dispatchTodo(toggleTodoAC(id));
-    }, []);
 
-    const updateTodoTitle = useCallback((id: string, text: string) => {
-        dispatchTodo(updateTitleTodoAC(id, text));
-    }, []);
+
 
     const changeFilter = useCallback((value: typeof filter) => {
         dispatchTodo(changeTodoFilterAC(value));
@@ -131,21 +121,9 @@ export const App = () => {
 
     /* ===================== TASKS ===================== */
 
-    const addTask = useCallback((todoId: string, text: string) => {
-        dispatchTasks(addTaskAC(todoId, text));
-    }, []);
 
-    const deleteTask = useCallback((todoId: string, taskId: string) => {
-        dispatchTasks(deleteTaskAC(todoId, taskId));
-    }, []);
 
-    const toggleTask = useCallback((todoId: string, taskId: string) => {
-        dispatchTasks(toggleTaskAC(todoId, taskId));
-    }, []);
 
-    const updateTask = useCallback((todoId: string, taskId: string, text: string) => {
-        dispatchTasks(updateTitleTaskAC(todoId, taskId, text));
-    }, []);
 
     return (
         <ThemeProvider theme={theme}>

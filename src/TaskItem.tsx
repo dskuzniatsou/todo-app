@@ -1,88 +1,44 @@
 import * as React from "react";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import { Checkbox, IconButton, ListItem} from "@mui/material";
 import { TextField, Typography } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-
-
-export type  Task = {
-    id: string;
-    text: string;
-    completed: boolean;
-}
+import {EditableSpan} from "./EditableSpan.tsx";
+import type {Task} from "./App.tsx";
+import {deleteTaskAC, toggleTaskAC, updateTitleTaskAC} from "./model/tasks-reducer.ts";
 
 type Props = {
-    task: Task
+    task: Task;
     todoId: string;
-    onToggle: (todoId: string, taskId: string) => void;
-    onDelete: (todoId: string, taskId: string) => void;
-    onUpdateTask: (todoId:string, taskId: string, text: string) => void;
 };
-export const TaskItem = React.memo ( ({task, todoId, onToggle,  onDelete, onUpdateTask }:Props) => {
-    console.log('TaskItem render', task.text)
-    const [isEditing, setIsEditing] = useState(false);
-    const [value, setValue] = useState(task.text);
-    useEffect(() => {
-        if (!isEditing) {
-            setValue(task.text);
-        }
-    }, [task.text, isEditing]);
+export const TaskItem = React.memo ( ({task, todoId}:Props) => {
+    console.log('TaskItem render', task.title)
+    const dispatch = useAppdispatch()
 
-    const finishEdit = () => {
-        const trimmed = value.trim();
-        if (trimmed) {
-            onUpdateTask(todoId, task.id, trimmed);
-        }
-        setIsEditing(false);
-    };
 
-    const cancelEdit = () => {
-        setValue(task.text);
-        setIsEditing(false);
-    };
+    const deleteTask = useCallback((todoId: string, taskId: string) => {
+        dispatch(deleteTaskAC(todoId, taskId));
+    }, []);
+
+    const toggleTask = useCallback((todoId: string, taskId: string) => {
+        dispatch(toggleTaskAC(todoId, taskId));
+    }, []);
+
+    const updateTask = useCallback((todoId: string, taskId: string, text: string) => {
+        dispatch(updateTitleTaskAC(todoId, taskId, text));
+    }, []);
 
     return (
         //material ui
-        <ListItem
-            dense
-            secondaryAction={
-                <IconButton edge="end" onClick={() => onDelete(todoId, task.id)}>
-                    <DeleteIcon />
-                </IconButton>
-            }
-        >
-            <Checkbox
-                checked={task.completed}
-                onChange={() => onToggle(todoId, task.id)}
-            />
-                {isEditing ? (
-                    <TextField
-                        autoFocus
-                        value={value}
-                        size="small"
-                        variant="standard"
-                        onChange={e => setValue(e.target.value)}
-                        onBlur={finishEdit}
-                        onKeyDown={e => {
-                            if (e.key === "Enter") finishEdit();
-                            if (e.key === "Escape") cancelEdit();
-                        }}
-                        inputProps={{ maxLength: 30 }}
-                        sx={{ ml: 1 }}
-                    />
-                ) : (
-                    <Typography
-                        onDoubleClick={() => setIsEditing(true)}
-                        sx={{
-                            cursor: "pointer",
-                            userSelect: "none",
-                            textDecoration: task.completed ? "line-through" : "none",
-                            opacity: task.completed ? 0.6 : 1,
-                        }}
-                    >
-                        {task.text}
-                    </Typography>
-                )}
+        <ListItem>
+
+            <div>
+                <Checkbox checked={task.completed} onChange={toggleTask}/>
+                <EditableSpan value={task.title} onChange={updateTask}/>
+            </div>
+            <IconButton onClick={deleteTask} >
+                <DeleteIcon/>
+            </IconButton>
         </ListItem>
 // HTML
         // <div >

@@ -6,7 +6,7 @@ type Task = {
 };
 
 type Todo = {
-    completed: boolean;
+    filter: boolean;
     tasks: Task[];
 };
 
@@ -18,7 +18,7 @@ export const useTodoProgress = (todo: Todo) => {
 
         const progress = hasTasks
             ? Math.round((completedTasks / totalTasks) * 100)
-            : todo.completed
+            : todo.filter
                 ? 100
                 : 0;
 
@@ -28,5 +28,5 @@ export const useTodoProgress = (todo: Todo) => {
             totalTasks,
             hasTasks,
         };
-    }, [todo.tasks, todo.completed]);
+    }, [todo.tasks, todo.filter]);
 };
